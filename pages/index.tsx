@@ -1,44 +1,55 @@
-import { useState } from 'react';
-import { MarkdownEditor } from '../components';
-import ReactMarkdown from 'react-markdown'
-import remarkGFM from 'remark-gfm';
+import MoreStories from '../components/more-stories'
+import HeroPost from '../components/hero-post'
+import { getAllPosts } from '../lib/api'
+import Head from 'next/head'
+import { CMS_NAME } from '../lib/constants'
+import Post from '../types/post'
 
+type Props = {
+  allPosts: Post[]
+}
 
-function IndexPage() {
-
-  const [value, setValue] = useState("");
-
-  const handleEditorChange = (newValue, e) => {
-    setValue(newValue);
-  }
-
-  function editorDidMount(editor, monaco) {
-    editor.focus();
-  }
-
+const Index = ({ allPosts }: Props) => {
+  const heroPost = allPosts[0]
+  const morePosts = allPosts.slice(1)
   return (
     <>
-      <div style={{ display: 'flex' }} >
-        <div style={{ width: '49%' }} >
-          <MarkdownEditor
-            language="markdown"
-            height={'600px'}
-            theme="vs"
-            editorDidMount={editorDidMount}
-            value={value}
-            onChange={handleEditorChange}
-          />
-        </div>
-        <div style={{ width: '49%' }} >
-          <h1>Output</h1>
-          <ReactMarkdown className="markdown-preview" plugins={[remarkGFM]} children={value} />
+      <div>
+        <Head>
+          <title>Next.js Blog Example with {CMS_NAME}</title>
+        </Head>
+        <div>
+          <div />
+          {heroPost && (
+            <HeroPost
+              title={heroPost.title}
+              coverImage={heroPost.coverImage}
+              date={heroPost.date}
+              author={heroPost.author}
+              slug={heroPost.slug}
+              excerpt={heroPost.excerpt}
+            />
+          )}
+          {morePosts.length > 0 && <MoreStories posts={morePosts} />}
         </div>
       </div>
-
-
     </>
-
   )
 }
 
-export default IndexPage;
+export default Index
+
+export const getStaticProps = async () => {
+  const allPosts = getAllPosts([
+    'title',
+    'date',
+    'slug',
+    'author',
+    'coverImage',
+    'excerpt',
+  ])
+
+  return {
+    props: { allPosts },
+  }
+}
