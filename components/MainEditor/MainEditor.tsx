@@ -1,14 +1,29 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import dynamic from 'next/dynamic'
 const MarkdownEditor = dynamic(import('../Editor/MarkdownEditor'), { ssr: false });
 import { EditorProps } from '../Editor/Editor';
 import ImageUploadHandler from './ImageUploadHandler';
 
-interface MainEditor extends EditorProps {
-  setActiveLine: Function;
+function useWindowSize() {
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  return size;
 }
 
-const MainEditor = ({ setActiveLine, ...props }: MainEditor) => {
+
+interface MainEditor extends EditorProps {
+  setActiveLine: Function;
+  setOnEditorResize: Function;
+}
+
+const MainEditor = ({ setActiveLine, setOnEditorResize, ...props }: MainEditor) => {
 
   const [monaco, setMonaco] = useState(null);
   const [editor, setEditor] = useState(null);
@@ -46,9 +61,9 @@ const MainEditor = ({ setActiveLine, ...props }: MainEditor) => {
     });
   }
 
-  function updateOption(editorInstance){
+  function updateOption(editorInstance) {
     editorInstance.updateOptions({
-      wordWrap: "on"
+      wordWrap: "on",
     })
   }
 
@@ -59,6 +74,9 @@ const MainEditor = ({ setActiveLine, ...props }: MainEditor) => {
 
     updateOption(editorInstance);
 
+    setOnEditorResize({
+      func: () => editorInstance.layout()
+    });
 
     if (props.editorDidMount) props.editorDidMount(editorInstance, monaco);
   }

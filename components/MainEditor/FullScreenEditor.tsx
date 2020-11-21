@@ -4,6 +4,7 @@ import ImageUploadHandler from './ImageUploadHandler';
 import './FullScreenEditor.css';
 import styled from 'styled-components';
 import MarkdownPreview from './MarkdownPreview';
+import ReactResizeDetector from 'react-resize-detector';
 
 const Styles = styled.div`
 
@@ -43,15 +44,15 @@ body {
     display: flex;
     overflow: hidden;
 
-    > .left,
-    > .right{
+    .left,
+    .right{
       width: 50%;
       background: #eee;
       flex: 0 0 auto;
       /* overflow: scroll; */
     }
 
-    > .middle {
+    .middle {
       flex: 1 1 auto;
       overflow: scroll;
     }
@@ -66,7 +67,10 @@ function FullScreenEditor() {
   const markdownPreviewRef = useRef(null);
 
   const [value, setValue] = useState("");
-  const [activeLine, setActiveLine ] = useState(1);
+  const [activeLine, setActiveLine] = useState(1);
+  const [onEditorResize, setOnEditorResize] = useState({
+    func: () => {}
+  });
 
   const handleEditorChange = (newValue, e) => {
     setValue(newValue);
@@ -82,11 +86,15 @@ function FullScreenEditor() {
     imageUploadRef.current.click();
   };
 
-  useEffect(()=> {
-    if(localStorage.getItem('markdown_draft')){
+  const onResize = () =>{
+    onEditorResize.func();
+  }
+
+  useEffect(() => {
+    if (localStorage.getItem('markdown_draft')) {
       setValue(localStorage.getItem('markdown_draft'));
     }
-  },[]);
+  }, []);
 
   return (
     <Styles>
@@ -102,16 +110,19 @@ function FullScreenEditor() {
 
           </div>
           <div className="main">
-            <div className="left">
-              <MainEditor
-                theme="vs"
-                width={'100%'}
-                editorDidMount={editorDidMount}
-                value={value}
-                setActiveLine={setActiveLine}
-                onChange={handleEditorChange}
-              />
-            </div>
+            <ReactResizeDetector onResize={onResize} >
+              <div className="left">
+                <MainEditor
+                  theme="vs"
+                  width={'100%'}
+                  editorDidMount={editorDidMount}
+                  value={value}
+                  setActiveLine={setActiveLine}
+                  setOnEditorResize={setOnEditorResize}
+                  onChange={handleEditorChange}
+                />
+              </div>
+            </ReactResizeDetector>
             <div className="middle">
               <MarkdownPreview /* isMatchLine={isMatchLine} */ activeLine={activeLine} children={value} />
             </div>
