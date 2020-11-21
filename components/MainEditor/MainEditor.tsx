@@ -64,6 +64,7 @@ const MainEditor = ({ setActiveLine, setOnEditorResize, ...props }: MainEditor) 
   function updateOption(editorInstance) {
     editorInstance.updateOptions({
       wordWrap: "on",
+      quickSuggestions: false
     })
   }
 

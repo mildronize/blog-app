@@ -48,9 +48,10 @@ function parseChildNodeToElement(t) {
   // if (t) t.scrollIntoView();
 }
 
-function MarkdownPreview({ activeLine, ...props }: any) {
+function MarkdownPreview({ activeLine, children, ...props }: any) {
 
   const markdownPreviewRef = useRef(null);
+  const [mapLines, setMapLines] = useState([]);
 
   const buildMapLines = (nodes) => {
     const mapLines: Dictionary[] = [];
@@ -58,7 +59,7 @@ function MarkdownPreview({ activeLine, ...props }: any) {
     nodes.forEach(node => {
       const sourcePosition = parseChildNodeToElement(node).dataset.sourcepos || '';
 
-      if(sourcePosition != ''){
+      if (sourcePosition != '') {
         const sourcePositionSplit = sourcePosition.split('-');
 
         let startPositionLine = 0, endPositionLine = 0;
@@ -94,11 +95,8 @@ function MarkdownPreview({ activeLine, ...props }: any) {
   useEffect(() => {
 
     // data-sourcepos="3:1-3:13"
-    const nodes = (markdownPreviewRef.current as Node).childNodes;
-    const mapNodeLines = buildMapLines(nodes);
-
-    mapNodeLines.forEach(item => {
-      if(activeLine >= item.startLine && activeLine <= item.endLine){
+    mapLines.forEach(item => {
+      if (activeLine >= item.startLine && activeLine <= item.endLine) {
         parseChildNodeToElement(item.node).scrollIntoView({ behavior: 'smooth' });
         // const firstNodeLine = findFirstNodeLine(mapNodeLines, item.startLine);
         // console.log(firstNodeLine)
@@ -111,11 +109,22 @@ function MarkdownPreview({ activeLine, ...props }: any) {
 
   }, [activeLine])
 
+  useEffect(() => {
+    // Render map lines when value changed
+    // Debounce (delay) 1 seconds
+    const timer = setTimeout(() => {
+      const nodes = (markdownPreviewRef.current as Node).childNodes;
+      const mapNodeLines = buildMapLines(nodes);
+      setMapLines(mapNodeLines);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [children]);
+
 
   return (
     <>
       <div className="markdown-preview" ref={markdownPreviewRef} >
-        <ReactMarkdown sourcePos={true}  {...props} allowDangerousHtml={true} plugins={[remarkGFM]} />
+        <ReactMarkdown sourcePos={true}  {...props} allowDangerousHtml={true} plugins={[remarkGFM]} children={children} />
       </div>
     </>
   )

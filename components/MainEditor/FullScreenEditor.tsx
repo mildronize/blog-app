@@ -64,18 +64,32 @@ body {
 function FullScreenEditor() {
 
   const imageUploadRef = useRef(null);
-  const markdownPreviewRef = useRef(null);
 
   const [value, setValue] = useState("");
+  const [previewValue, setPreviewValue] = useState("");
+  const [previousValueLength, setPreviousValueLength] = useState(0);
   const [activeLine, setActiveLine] = useState(1);
   const [onEditorResize, setOnEditorResize] = useState({
     func: () => {}
   });
 
   const handleEditorChange = (newValue, e) => {
+
     setValue(newValue);
     localStorage.setItem('markdown_draft', value);
+    // delay for rendering preview
+    if(Math.abs(previousValueLength - newValue.length) <= 3){
+      setPreviewValue(newValue);
+    }
+
+    const timer = setTimeout(() => {
+      setPreviousValueLength(value.length);
+    }, 300);
+
+    return () => clearTimeout(timer);
   }
+
+
 
   function editorDidMount(editor, monaco) {
     editor.focus();
@@ -91,9 +105,13 @@ function FullScreenEditor() {
   }
 
   useEffect(() => {
+
     if (localStorage.getItem('markdown_draft')) {
       setValue(localStorage.getItem('markdown_draft'));
+      setPreviewValue(localStorage.getItem('markdown_draft'));
+      setPreviousValueLength(value.length);
     }
+    console.log(previewValue);
   }, []);
 
   return (
@@ -124,7 +142,7 @@ function FullScreenEditor() {
               </div>
             </ReactResizeDetector>
             <div className="middle">
-              <MarkdownPreview /* isMatchLine={isMatchLine} */ activeLine={activeLine} children={value} />
+              <MarkdownPreview  activeLine={activeLine} children={previewValue} />
             </div>
 
           </div>
