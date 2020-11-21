@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic'
-const Editor = dynamic(import('./Editor/Editor'), { ssr: false });
-import { EditorProps } from './Editor/Editor';
+const Editor = dynamic(import('../Editor/Editor'), { ssr: false });
+import { EditorProps } from '../Editor/Editor';
 
 const DragNDropEditor = (props: EditorProps) => {
 
@@ -33,7 +33,7 @@ const DragNDropEditor = (props: EditorProps) => {
   function importNoSSR(editorInstance) {
     const loader = async () => {
 
-      const MonacoDrag = await import('./Editor/monacoDragAndDropProvider')
+      const MonacoDrag = await import('../Editor/monacoDragAndDropProvider')
       const dragProvider = new MonacoDrag.MonacoDragNDropProvider(onDrop, () => editorInstance);
       setEventDrag({
         onDragOver: dragProvider.props.onDragOver,

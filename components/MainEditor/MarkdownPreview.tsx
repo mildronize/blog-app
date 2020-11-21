@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown'
 import remarkGFM from 'remark-gfm';
-import './MarkdownPreview.css';
 
 interface Dictionary {
   [key: string]: any
