@@ -4,7 +4,7 @@ import remarkGFM from 'remark-gfm';
 import './MarkdownPreview.css';
 
 interface Dictionary {
-  [key : string]: any
+  [key: string]: any
 }
 
 function parseChildNodeToElement(t) {
@@ -53,35 +53,38 @@ function MarkdownPreview({ activeLine, ...props }: any) {
   const markdownPreviewRef = useRef(null);
 
   const buildMapLines = (nodes) => {
-    const mapLines : Dictionary[] = [];
+    const mapLines: Dictionary[] = [];
 
     nodes.forEach(node => {
       const sourcePosition = parseChildNodeToElement(node).dataset.sourcepos || '';
-      const sourcePositionSplit = sourcePosition.split('-');
 
-      let startPositionLine = 0, endPositionLine = 0;
+      if(sourcePosition != ''){
+        const sourcePositionSplit = sourcePosition.split('-');
 
-      if(sourcePositionSplit && sourcePositionSplit.length > 0 && sourcePositionSplit[0] !== ''){
-        startPositionLine = Number(sourcePositionSplit[0].split(':')[0]);
+        let startPositionLine = 0, endPositionLine = 0;
+
+        if (sourcePositionSplit && sourcePositionSplit.length > 0 && sourcePositionSplit[0] !== '') {
+          startPositionLine = Number(sourcePositionSplit[0].split(':')[0]);
+        }
+
+        if (sourcePositionSplit && sourcePositionSplit.length > 1 && sourcePositionSplit[1] !== '') {
+          endPositionLine = Number(sourcePositionSplit[1].split(':')[0]);
+        }
+
+        const lines: Dictionary = {}
+        lines['node'] = node;
+        lines['startLine'] = startPositionLine;
+        lines['endLine'] = endPositionLine;
+        mapLines.push(lines);
       }
-
-      if(sourcePositionSplit && sourcePositionSplit.length > 1 && sourcePositionSplit[1] !== ''){
-        endPositionLine = Number(sourcePositionSplit[1].split(':')[0]);
-      }
-
-      const lines: Dictionary = {}
-      lines['node'] = node;
-      lines['startLine'] = startPositionLine;
-      lines['endLine'] = endPositionLine;
-      mapLines.push(lines);
     });
 
     return mapLines;
   }
 
-  const findFirstNodeLine  = (mapNodeLines, startLine) => {
-    for(let i =0;i <mapNodeLines.length; i++ ){
-      if(startLine == mapNodeLines[i].startLine){
+  const findFirstNodeLine = (mapNodeLines, startLine) => {
+    for (let i = 0; i < mapNodeLines.length; i++) {
+      if (startLine == mapNodeLines[i].startLine) {
         return mapNodeLines[i];
       }
     }
@@ -96,13 +99,13 @@ function MarkdownPreview({ activeLine, ...props }: any) {
 
     mapNodeLines.forEach(item => {
       if(activeLine >= item.startLine && activeLine <= item.endLine){
-        // parseChildNodeToElement(item.node).scrollIntoView({ behavior: 'smooth' });
-        const firstNodeLine = findFirstNodeLine(mapNodeLines, item.startLine);
-        console.log(firstNodeLine)
-        if(firstNodeLine)
-          parseChildNodeToElement(item.node).scrollIntoView({ behavior: 'smooth' });
-        else
-          parseChildNodeToElement(firstNodeLine.node).scrollIntoView({ behavior: 'smooth' });
+        parseChildNodeToElement(item.node).scrollIntoView({ behavior: 'smooth' });
+        // const firstNodeLine = findFirstNodeLine(mapNodeLines, item.startLine);
+        // console.log(firstNodeLine)
+        // if(firstNodeLine)
+        //   parseChildNodeToElement(item.node).scrollIntoView({ behavior: 'smooth' });
+        // else
+        //   parseChildNodeToElement(firstNodeLine.node).scrollIntoView({ behavior: 'smooth' });
       }
     });
 

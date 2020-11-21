@@ -104,7 +104,6 @@ function FullScreenEditor() {
           <div className="main">
             <div className="left">
               <MainEditor
-                language="markdown"
                 theme="vs"
                 width={'100%'}
                 editorDidMount={editorDidMount}

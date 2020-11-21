@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic'
-const Editor = dynamic(import('../Editor/Editor'), { ssr: false });
+const MarkdownEditor = dynamic(import('../Editor/MarkdownEditor'), { ssr: false });
 import { EditorProps } from '../Editor/Editor';
 import ImageUploadHandler from './ImageUploadHandler';
 
@@ -27,10 +27,23 @@ const MainEditor = ({ setActiveLine, ...props }: MainEditor) => {
   }
 
   function onScrollSync(editorInstance) {
-    editorInstance.onDidChangeCursorPosition((e) => {
-      setActiveLine(Number(e.position.lineNumber));
-    });
 
+    /*
+    Scroll by current cursor
+    */
+
+    // editorInstance.onDidChangeCursorPosition((e) => {
+    //   setActiveLine(Number(e.position.lineNumber));
+    // });
+
+    /*
+    Scroll by first line of Visible Ranges
+    */
+
+    editorInstance.onDidScrollChange(function (e) {
+      setActiveLine(Number(editorInstance.getVisibleRanges()[0].startLineNumber));
+      // console.log(editorInstance.getVisibleRanges()[0].startLineNumber);
+    });
   }
 
   function updateOption(editorInstance){
@@ -53,9 +66,8 @@ const MainEditor = ({ setActiveLine, ...props }: MainEditor) => {
   return (
     <span>
 
-      <Editor
+      <MarkdownEditor
         {...props}
-        language="markdown"
         editorDidMount={_editorDidMount}
       />
 
