@@ -18,10 +18,10 @@ export default function App({ Component, pageProps }) {
       {/* <StyledNormalize /> */}
       {/* <GlobalStyle /> */}
       <Provider store={store}>
-          <ThemeSwitcher>
-        <Component {...pageProps} />
+        <ThemeSwitcher>
+          <Component {...pageProps} />
         </ThemeSwitcher>
-        </Provider>
+      </Provider>
     </>
   )
 }
