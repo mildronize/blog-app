@@ -4,7 +4,7 @@ import { lightTheme, darkTheme } from "../../themes/Themes";
 
 import { useThemeSwitcher } from "../theme";
 
-import { GlobalStyles } from "../../themes/GlobalStyles";
+import { GlobalStyles, MarkdownStyle } from "../../themes/GlobalStyles";
 import { Normalize } from 'styled-normalize';
 
 export const ThemeSwitcher = (props) => {
@@ -16,6 +16,7 @@ export const ThemeSwitcher = (props) => {
     <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <Normalize />
       <GlobalStyles />
+      <MarkdownStyle />
       {props.children}
     </ThemeProvider>
   );
