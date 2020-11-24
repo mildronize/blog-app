@@ -5,6 +5,7 @@ import './FullScreenEditor.css';
 import styled from 'styled-components';
 import MarkdownPreview from './MarkdownPreview';
 import ReactResizeDetector from 'react-resize-detector';
+import PropertyEditor from './PropertyEditor';
 
 const Styles = styled.div`
 
@@ -44,16 +45,20 @@ body {
     display: flex;
     overflow: hidden;
 
-    .left,
-    .right{
-      width: 50%;
+    .markdown-editor-layout{
+      width: 40%;
       background: #eee;
       flex: 0 0 auto;
       /* overflow: scroll; */
     }
 
-    .middle {
+    .markdown-preview-layout {
       flex: 1 1 auto;
+      overflow: scroll;
+    }
+
+    .property-layout{
+      width: 20%;
       overflow: scroll;
     }
   }
@@ -129,7 +134,7 @@ function FullScreenEditor() {
           </div>
           <div className="main">
             <ReactResizeDetector onResize={onResize} >
-              <div className="left">
+              <div className="markdown-editor-layout">
                 <MainEditor
                   theme="vs"
                   width={'100%'}
@@ -141,8 +146,11 @@ function FullScreenEditor() {
                 />
               </div>
             </ReactResizeDetector>
-            <div className="middle">
+            <div className="markdown-preview-layout">
               <MarkdownPreview  activeLine={activeLine} children={previewValue} />
+            </div>
+            <div className="property-layout">
+              <PropertyEditor />
             </div>
 
           </div>
