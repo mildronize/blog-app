@@ -14,6 +14,11 @@ export const GlobalStyles = createGlobalStyle`
     font-family: Tahoma, Helvetica, Arial, Roboto, sans-serif;
     transition: all 0.50s linear;
   }
+
+  @font-face{
+    font-family:codicon;
+    src:url(assets/codicon.ttf)
+    format("truetype")}
   `;
 
 export const MarkdownStyle = createGlobalStyle`

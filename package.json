@@ -9,6 +9,8 @@
     "export": "next export"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.1",
+    "@material-ui/icons": "^4.9.1",
     "@reduxjs/toolkit": "^1.4.0",
     "@types/lodash": "^4.14.165",
     "@zeit/next-css": "^1.0.1",
