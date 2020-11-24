@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic'
 import axios from 'axios';
-const Editor = dynamic(import('./Editor/Editor'), { ssr: false });
-import { EditorProps } from './Editor/Editor';
+const Editor = dynamic(import('../Editor/Editor'), { ssr: false });
+import { EditorProps } from '../Editor/Editor';
 import './DragNDropEditorUpload.css';
 
 // import DropArea from './Dropzone';
@@ -46,7 +46,7 @@ const DragNDropEditor = (props: EditorProps) => {
   function importNoSSR(editorInstance) {
     const loader = async () => {
 
-      const MonacoDrag = await import('./Editor/monacoDragAndDropProvider')
+      const MonacoDrag = await import('../Editor/monacoDragAndDropProvider')
       const dragProvider = new MonacoDrag.MonacoDragNDropProvider(onDropEditor, () => editorInstance);
       setEventDrag({
         onDragOver: dragProvider.props.onDragOver,
