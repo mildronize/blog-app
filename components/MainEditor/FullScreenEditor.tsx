@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import MarkdownPreview from './MarkdownPreview';
 import ReactResizeDetector from 'react-resize-detector';
 import PropertyEditor from './PropertyEditor';
+import { useDebounce } from "use-debounce";
+
 
 const Styles = styled.div`
 
@@ -71,29 +73,16 @@ function FullScreenEditor() {
   const imageUploadRef = useRef(null);
 
   const [value, setValue] = useState("");
-  const [previewValue, setPreviewValue] = useState("");
-  const [previousValueLength, setPreviousValueLength] = useState(0);
+  const [previewValue] = useDebounce(value, 300);
   const [activeLine, setActiveLine] = useState(1);
   const [onEditorResize, setOnEditorResize] = useState({
     func: () => {}
   });
 
   const handleEditorChange = (newValue, e) => {
-
     setValue(newValue);
     localStorage.setItem('markdown_draft', value);
-    // delay for rendering preview
-    if(Math.abs(previousValueLength - newValue.length) <= 3){
-      setPreviewValue(newValue);
-    }
-
-    const timer = setTimeout(() => {
-      setPreviousValueLength(value.length);
-    }, 300);
-
-    return () => clearTimeout(timer);
   }
-
 
 
   function editorDidMount(editor, monaco) {
@@ -113,11 +102,11 @@ function FullScreenEditor() {
 
     if (localStorage.getItem('markdown_draft')) {
       setValue(localStorage.getItem('markdown_draft'));
-      setPreviewValue(localStorage.getItem('markdown_draft'));
-      setPreviousValueLength(value.length);
     }
     console.log(previewValue);
+
   }, []);
+
 
   return (
     <Styles>
